@@ -1,6 +1,7 @@
 # 0.9.12
 
 - Add Spanish translation, thanks to SirColor #5
+- Add French translation, thanks to valentin56610 #6
 
 # 0.9.11
 
