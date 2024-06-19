@@ -19,10 +19,10 @@
   "environment": "*",
   "entrypoints": {
     "client": [
-      "net.runes.fabric.client.FabricClientMod"
+      "net.runes.client.RunesClientMod"
     ],
     "main": [
-      "net.runes.fabric.FabricMod"
+      "net.runes.RunesMod"
     ]
   },
   "mixins": [

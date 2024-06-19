@@ -1,5 +1,6 @@
 package net.runes;
 
+import net.fabricmc.api.ModInitializer;
 import net.fabricmc.fabric.api.itemgroup.v1.ItemGroupEvents;
 import net.minecraft.advancement.criterion.Criteria;
 import net.minecraft.item.ItemGroups;
@@ -9,10 +10,11 @@ import net.minecraft.util.Identifier;
 import net.runes.api.RuneItems;
 import net.runes.crafting.*;
 
-public class RunesMod {
+public class RunesMod implements ModInitializer {
     public static final String ID = "runes";
 
-    public static void init() {
+    @Override
+    public void onInitialize() {
         Registry.register(Registries.SOUND_EVENT, RuneCrafting.ID, RuneCrafting.SOUND);
         Registry.register(Registries.RECIPE_TYPE, new Identifier(ID, RuneCraftingRecipe.NAME), RuneCraftingRecipe.TYPE);
         Registry.register(Registries.RECIPE_SERIALIZER, new Identifier(ID, RuneCraftingRecipe.NAME), RuneCraftingRecipe.SERIALIZER);
