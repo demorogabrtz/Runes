@@ -2,7 +2,7 @@
   "type": "minecraft:crafting_shaped",
   "key": {
     "#": {
-      "item": "minecraft:polished_andesite"
+      "tag": "runes:fancy_stone_materials"
     },
     "G": {
       "item": "minecraft:gold_ingot"

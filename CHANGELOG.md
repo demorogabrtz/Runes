@@ -1,3 +1,7 @@
+# 0.9.13
+
+- New Rune Crafting Altar recipe
+
 # 0.9.12
 
 - Add Spanish translation, thanks to SirColor #5
