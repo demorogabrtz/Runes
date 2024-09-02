@@ -1,8 +1,6 @@
 package net.runes.api;
 
-import net.fabricmc.fabric.api.item.v1.FabricItemSettings;
 import net.minecraft.item.Item;
-import net.minecraft.item.ItemGroup;
 import net.minecraft.util.Identifier;
 import net.runes.RunesMod;
 
@@ -21,8 +19,8 @@ public class RuneItems {
     static {
         var all = new ArrayList<Entry>();
         for(var type : RuneType.values()) {
-            var id = new Identifier(RunesMod.ID, type.toString().toLowerCase(Locale.ENGLISH) + "_stone");
-            var item = new Item(new FabricItemSettings());
+            var id = Identifier.of(RunesMod.ID, type.toString().toLowerCase(Locale.ENGLISH) + "_stone");
+            var item = new Item(new Item.Settings());
             all.add(new Entry(id, type, item));
         }
         entries = all;

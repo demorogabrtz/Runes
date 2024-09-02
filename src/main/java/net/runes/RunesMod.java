@@ -16,14 +16,14 @@ public class RunesMod implements ModInitializer {
     @Override
     public void onInitialize() {
         Registry.register(Registries.SOUND_EVENT, RuneCrafting.ID, RuneCrafting.SOUND);
-        Registry.register(Registries.RECIPE_TYPE, new Identifier(ID, RuneCraftingRecipe.NAME), RuneCraftingRecipe.TYPE);
-        Registry.register(Registries.RECIPE_SERIALIZER, new Identifier(ID, RuneCraftingRecipe.NAME), RuneCraftingRecipe.SERIALIZER);
-        Registry.register(Registries.BLOCK, new Identifier(ID, RuneCraftingBlock.NAME), RuneCraftingBlock.INSTANCE);
-        Registry.register(Registries.ITEM, new Identifier(ID, RuneCraftingBlock.NAME), RuneCraftingBlock.ITEM);
+        Registry.register(Registries.RECIPE_TYPE, Identifier.of(ID, RuneCraftingRecipe.NAME), RuneCraftingRecipe.TYPE);
+        Registry.register(Registries.RECIPE_SERIALIZER, Identifier.of(ID, RuneCraftingRecipe.NAME), RuneCraftingRecipe.SERIALIZER);
+        Registry.register(Registries.BLOCK, Identifier.of(ID, RuneCraftingBlock.NAME), RuneCraftingBlock.INSTANCE);
+        Registry.register(Registries.ITEM, Identifier.of(ID, RuneCraftingBlock.NAME), RuneCraftingBlock.ITEM);
         ItemGroupEvents.modifyEntriesEvent(ItemGroups.FUNCTIONAL).register(content -> {
             content.add(RuneCraftingBlock.ITEM);
         });
-        Registry.register(Registries.SCREEN_HANDLER, new Identifier(ID, RuneCraftingRecipe.NAME), RuneCraftingScreenHandler.HANDLER_TYPE);
+        Registry.register(Registries.SCREEN_HANDLER, Identifier.of(ID, RuneCraftingRecipe.NAME), RuneCraftingScreenHandler.HANDLER_TYPE);
 
         for(var entry: RuneItems.entries) {
             Registry.register(Registries.ITEM, entry.id(), entry.item());
@@ -33,7 +33,5 @@ public class RunesMod implements ModInitializer {
                 content.add(entry.item());
             }
         });
-
-        Criteria.register(RuneCraftingCriteria.INSTANCE);
     }
 }

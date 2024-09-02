@@ -1,13 +1,13 @@
 package net.runes.crafting;
 
-import net.fabricmc.fabric.api.item.v1.FabricItemSettings;
 import net.fabricmc.fabric.api.object.builder.v1.block.FabricBlockSettings;
 import net.minecraft.block.*;
-import net.minecraft.client.item.TooltipContext;
 import net.minecraft.entity.player.PlayerEntity;
 import net.minecraft.item.BlockItem;
+import net.minecraft.item.Item;
 import net.minecraft.item.ItemPlacementContext;
 import net.minecraft.item.ItemStack;
+import net.minecraft.item.tooltip.TooltipType;
 import net.minecraft.screen.NamedScreenHandlerFactory;
 import net.minecraft.screen.ScreenHandlerContext;
 import net.minecraft.screen.SimpleNamedScreenHandlerFactory;
@@ -31,8 +31,8 @@ import java.util.List;
 
 public class RuneCraftingBlock extends CraftingTableBlock {
     public static final String NAME = "crafting_altar";
-    public static final RuneCraftingBlock INSTANCE = new RuneCraftingBlock(FabricBlockSettings.create().hardness(2).nonOpaque());
-    public static final BlockItem ITEM = new BlockItem(INSTANCE, new FabricItemSettings());
+    public static final RuneCraftingBlock INSTANCE = new RuneCraftingBlock(AbstractBlock.Settings.create().hardness(2).nonOpaque());
+    public static final BlockItem ITEM = new BlockItem(INSTANCE, new Item.Settings());
     private static final Text SCREEN_TITLE = Text.translatable("gui.runes.rune_crafting");
 
     public RuneCraftingBlock(Settings settings) {
@@ -40,8 +40,8 @@ public class RuneCraftingBlock extends CraftingTableBlock {
     }
 
     @Override
-    public void appendTooltip(ItemStack stack, @Nullable BlockView world, List<Text> tooltip, TooltipContext options) {
-        super.appendTooltip(stack, world, tooltip, options);
+    public void appendTooltip(ItemStack stack, Item.TooltipContext context, List<Text> tooltip, TooltipType options) {
+        super.appendTooltip(stack, context, tooltip, options);
         tooltip.add(Text.translatable("block." + RunesMod.ID + "." + NAME + ".hint").formatted(Formatting.GRAY, Formatting.ITALIC));
     }
 
@@ -51,7 +51,7 @@ public class RuneCraftingBlock extends CraftingTableBlock {
         }, SCREEN_TITLE);
     }
 
-    public ActionResult onUse(BlockState state, World world, BlockPos pos, PlayerEntity player, Hand hand, BlockHitResult hit) {
+    protected ActionResult onUse(BlockState state, World world, BlockPos pos, PlayerEntity player, BlockHitResult hit) {
         if (world.isClient) {
             return ActionResult.SUCCESS;
         } else {
