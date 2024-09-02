@@ -5,13 +5,13 @@ import net.minecraft.entity.player.PlayerEntity;
 import net.minecraft.entity.player.PlayerInventory;
 import net.minecraft.item.ItemStack;
 import net.minecraft.network.PacketByteBuf;
+import net.minecraft.recipe.RecipeEntry;
 import net.minecraft.resource.featuretoggle.FeatureFlags;
 import net.minecraft.screen.ForgingScreenHandler;
 import net.minecraft.screen.ScreenHandlerContext;
 import net.minecraft.screen.ScreenHandlerType;
 import net.minecraft.screen.slot.ForgingSlotsManager;
 import net.minecraft.screen.slot.Slot;
-import net.minecraft.server.network.ServerPlayerEntity;
 import net.minecraft.sound.SoundCategory;
 import net.minecraft.world.World;
 import org.jetbrains.annotations.Nullable;
@@ -23,8 +23,8 @@ public class RuneCraftingScreenHandler extends ForgingScreenHandler {
     public static final ScreenHandlerType<RuneCraftingScreenHandler> HANDLER_TYPE = new ScreenHandlerType(RuneCraftingScreenHandler::new, FeatureFlags.VANILLA_FEATURES);
     private final World world;
     @Nullable
-    private RuneCraftingRecipe currentRecipe;
-    private final List<RuneCraftingRecipe> recipes;
+    private RecipeEntry<RuneCraftingRecipe> currentRecipe;
+    private final List<RecipeEntry<RuneCraftingRecipe>> recipes;
 
     public RuneCraftingScreenHandler(int syncId, PlayerInventory playerInventory) {
         this(syncId, playerInventory, ScreenHandlerContext.EMPTY);
@@ -53,18 +53,22 @@ public class RuneCraftingScreenHandler extends ForgingScreenHandler {
     }
 
     protected boolean canTakeOutput(PlayerEntity player, boolean present) {
-        return this.currentRecipe != null && this.currentRecipe.matches(this.input, this.world);
+        return this.currentRecipe != null && this.currentRecipe.value().matches(this.createRecipeInput(), this.world);
+    }
+
+    private RuneCraftingRecipeInput createRecipeInput() {
+        return new RuneCraftingRecipeInput(this.input.getStack(0), this.input.getStack(1));
     }
 
     protected void onTakeOutput(PlayerEntity player, ItemStack stack) {
-        stack.onCraft(player.getWorld(), player, stack.getCount());
+        stack.onCraftByPlayer(player.getWorld(), player, stack.getCount());
         this.output.unlockLastRecipe(player, this.getInputStacks());
         this.decrementStack(0);
         this.decrementStack(1);
 
-        if(player instanceof ServerPlayerEntity serverPlayer) {
-            RuneCraftingCriteria.INSTANCE.trigger(serverPlayer);
-        }
+//        if(player instanceof ServerPlayerEntity serverPlayer) {
+//            RuneCraftingCriteria.INSTANCE.trigger(serverPlayer);
+//        }
         var runeCrafter = (RuneCrafter)player;
         if (runeCrafter.shouldPlayRuneCraftingSound(player.age)) {
             world.playSound(player.getX(), player.getY(), player.getZ(), RuneCrafting.SOUND, SoundCategory.BLOCKS, world.random.nextFloat() * 0.1F + 0.9F, 1, true);
@@ -83,22 +87,37 @@ public class RuneCraftingScreenHandler extends ForgingScreenHandler {
     }
 
     public void updateResult() {
-        List<RuneCraftingRecipe> list = this.world.getRecipeManager().getAllMatches(RuneCraftingRecipe.TYPE, this.input, this.world);
-        if (list.isEmpty()) {
-            this.output.setStack(0, ItemStack.EMPTY);
+        var recipeInput = this.createRecipeInput();
+        var result = this.world.getRecipeManager().getFirstMatch(RuneCraftingRecipe.TYPE, recipeInput, this.world);
+        if (result.isPresent()) {
+
+            var recipeEntry = result.get();
+            ItemStack itemStack = recipeEntry.value().craft(recipeInput, this.world.getRegistryManager());
+            // if (itemStack.isItemEnabled(this.world.getEnabledFeatures())) {
+                this.currentRecipe = recipeEntry;
+                this.output.setLastRecipe(recipeEntry);
+                this.output.setStack(0, itemStack);
+            //}
         } else {
-            this.currentRecipe = (RuneCraftingRecipe)list.get(0);
-            ItemStack itemStack = this.currentRecipe.craft(this.input, this.world.getRegistryManager());
-            this.output.setLastRecipe(this.currentRecipe);
-            this.output.setStack(0, itemStack);
+            this.output.setStack(0, ItemStack.EMPTY);
         }
+
+//        List<RuneCraftingRecipe> list = this.world.getRecipeManager().getAllMatches(RuneCraftingRecipe.TYPE, recipeInput, this.world);
+//        if (list.isEmpty()) {
+//            this.output.setStack(0, ItemStack.EMPTY);
+//        } else {
+//            this.currentRecipe = (RuneCraftingRecipe)list.get(0);
+//            ItemStack itemStack = this.currentRecipe.craft(this.input, this.world.getRegistryManager());
+//            this.output.setLastRecipe(this.currentRecipe);
+//            this.output.setStack(0, itemStack);
+//        }
     }
 
-    protected boolean isUsableAsAddition(ItemStack stack) {
-        return this.recipes.stream().anyMatch((recipe) -> {
-            return recipe.testAddition(stack);
-        });
-    }
+//    protected boolean isUsableAsAddition(ItemStack stack) {
+//        return this.recipes.stream().anyMatch((recipe) -> {
+//            return recipe.testAddition(stack);
+//        });
+//    }
 
     public boolean canInsertIntoSlot(ItemStack stack, Slot slot) {
         return slot.inventory != this.output && super.canInsertIntoSlot(stack, slot);

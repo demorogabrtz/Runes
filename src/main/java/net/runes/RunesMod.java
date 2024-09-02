@@ -2,7 +2,6 @@ package net.runes;
 
 import net.fabricmc.api.ModInitializer;
 import net.fabricmc.fabric.api.itemgroup.v1.ItemGroupEvents;
-import net.minecraft.advancement.criterion.Criteria;
 import net.minecraft.item.ItemGroups;
 import net.minecraft.registry.Registries;
 import net.minecraft.registry.Registry;
@@ -16,8 +15,7 @@ public class RunesMod implements ModInitializer {
     @Override
     public void onInitialize() {
         Registry.register(Registries.SOUND_EVENT, RuneCrafting.ID, RuneCrafting.SOUND);
-        Registry.register(Registries.RECIPE_TYPE, Identifier.of(ID, RuneCraftingRecipe.NAME), RuneCraftingRecipe.TYPE);
-        Registry.register(Registries.RECIPE_SERIALIZER, Identifier.of(ID, RuneCraftingRecipe.NAME), RuneCraftingRecipe.SERIALIZER);
+        RuneCrafting.registerRecipe();
         Registry.register(Registries.BLOCK, Identifier.of(ID, RuneCraftingBlock.NAME), RuneCraftingBlock.INSTANCE);
         Registry.register(Registries.ITEM, Identifier.of(ID, RuneCraftingBlock.NAME), RuneCraftingBlock.ITEM);
         ItemGroupEvents.modifyEntriesEvent(ItemGroups.FUNCTIONAL).register(content -> {

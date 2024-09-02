@@ -1,3 +1,7 @@
+# 1.0.0
+
+- Update to 1.21
+
 # 0.9.13
 
 - New Rune Crafting Altar recipe
