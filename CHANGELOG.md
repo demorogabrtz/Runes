@@ -1,3 +1,7 @@
+# 1.0.2
+
+- Allow running on 1.21
+
 # 1.0.1
 
 - Update to 1.21.1
